@@ -1,0 +1,36 @@
+package com.http;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class Test3 {
+//
+	public static void main(String[] args) throws IOException {
+		String urlstr = "http://192.168.0.100/";
+		URL url = null;
+		HttpURLConnection con = null;
+	
+		try {
+			
+			double lat = 127.32;
+			double lng = 37.2;
+			url = new URL(urlstr+"?lat="+lat+"&lng="+lng);
+			
+			
+			con = (HttpURLConnection) url.openConnection();
+			con.setReadTimeout(5000);
+			con.setRequestMethod("POST");
+			con.connect();
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}finally {
+			con.disconnect();
+		}
+		
+
+	}
+
+}

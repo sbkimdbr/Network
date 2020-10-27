@@ -1,0 +1,52 @@
+package com.tcpip;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server {
+    
+	//서버동작을 위한 변수 설정 
+	int port = 9999; //임의의 포트 설정
+	ServerSocket serverSocket;
+	Socket socket;
+	
+	public Server() {
+		
+	}
+	
+	public void startServer() throws IOException {
+		
+		//서버 준비 
+		serverSocket = new ServerSocket(port);
+		
+		//서버가 계속 접속 될 수 있도록 하려면 while루프 넣으면 됨 
+	    while(true) {
+	    	System.out.println("Ready Server...");
+		
+		//누가 들어올때까지는 여기서 멈춰있음 
+		socket = serverSocket.accept();
+		System.out.println("Connected...");
+	    }
+		
+		
+		
+	}
+	
+	
+	public static void main(String[] args) {
+		Server server =null;
+		
+		server = new Server();//serverstrart 
+		try {
+			server.startServer();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("End Server");
+		
+		
+	}
+
+}
