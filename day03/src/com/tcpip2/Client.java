@@ -1,0 +1,120 @@
+package com.tcpip2;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
+import com.msg.Msg;
+
+public class Client {
+
+	int port;
+	String address;
+	Socket socket;
+	Sender sender; //sender를 미리 만들어 놓는다. 소켓만들어진 이 후 센더
+	
+	public Client() {}
+	public Client(String address,int port) {
+		this.address=address;
+		this.port=port;
+	}
+
+	public void connect() throws Exception {
+		try {
+			socket = new Socket(address,port);
+		} catch (Exception e) {
+			while(true) {
+				Thread.sleep(2000);
+				 try {
+					socket = new Socket(address,port);
+					System.out.println("Connected...");
+					break;
+					
+				}  catch (IOException e1) {
+					System.out.println("Re-Try...");
+				}	
+				
+			}
+		} 
+	  sender = new Sender();  
+	}
+	
+//    class Sender extends Thread{
+    class Sender implements Runnable{
+	ObjectOutputStream dos;
+    	Msg mo;
+    	public void setMo(Msg mo) {
+    		this.mo=mo;
+    	}
+    	public Sender() {
+    		try {
+				dos = new ObjectOutputStream(socket.getOutputStream());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+		
+		
+		@Override
+		public void run() {
+			if(dos!=null) {
+		
+				try {
+					
+					dos.writeObject(mo);
+					//dos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+					}
+				}
+			}
+		
+    	
+    
+	
+	public void request() throws IOException {
+		Scanner sc = new Scanner(System.in);
+		
+		try {
+			Msg mo = null;
+			while(true) {
+				System.out.println("[Input Msg:]");
+				 
+				 String msg = sc.nextLine();
+			     mo = new Msg("192.168.123.107","[subi]",msg.trim());
+				sender.setMo(mo);
+				new Thread(sender).start(); 
+				Thread.sleep(1000);
+			    if(msg.equals("q")) {
+				System.out.println("Exit Client...");
+				break;
+			}
+//			sender.setMo(mo);                                  //여기는 하나의 소켓만 하나의 스트림으로만 메시지를 보냄  
+//			new Thread(sender).start();                        //sender가 여러번의 메시지를 보낼 수 있도록 한다
+		}
+			
+		}catch(Exception e) {
+			
+		}finally {
+			sc.close();
+			if(socket!=null) {
+				socket.close();
+			}
+		}
+	}
+	public static void main(String[] args) {
+		Client client = new Client("192.168.123.107",7777);
+		try {
+			client.connect();
+			client.request();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

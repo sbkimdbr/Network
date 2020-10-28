@@ -1,0 +1,16 @@
+package com.tcpip;
+
+public class Client {
+
+	int port;
+	String address;
+	public Client() {}
+	public Client(String address,int port) {
+		this.address=address;
+		this.port=port;
+	}
+
+	public static void main(String[] args) {
+		Client client = new Client("192.168.123.107",7777);
+	}
+}

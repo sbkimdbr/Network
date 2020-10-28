@@ -1,0 +1,106 @@
+package com.tcpip;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
+public class Client {
+
+	int port;
+	String address;
+	Socket socket;
+	
+	
+	public Client() {}
+	public Client(String address,int port) {
+		this.address=address;
+		this.port=port;
+	}
+
+	public void connect() throws Exception {
+		try {
+			socket = new Socket(address,port);
+		} catch (Exception e) {
+			while(true) {
+				Thread.sleep(2000);
+				 try {
+					socket = new Socket(address,port);
+					System.out.println("Connected...");
+					break;
+				}  catch (IOException e1) {
+					System.out.println("Re-Try...");
+				}	
+				
+			}
+		} 
+	}
+	
+    class Sender extends Thread{
+    	DataOutputStream dos;
+    	String msg;
+    	
+    	public Sender() {
+    		this.msg=msg;
+    		try {
+				dos = new DataOutputStream(socket.getOutputStream());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+		public Sender(String msg2) {
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public void run() {
+			if(dos!=null) {
+				try {
+					dos.writeUTF(msg);
+					dos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+					}
+				}
+			}
+		
+    	
+    
+	
+	public void request() throws IOException {
+		Scanner sc = new Scanner(System.in);
+		try {
+			while(true) {
+				System.out.println("[Input Msg:]");
+				String msg = sc.nextLine();
+			    new Sender(msg).start();
+				
+			    if(msg.equals("q")) {
+				System.out.println("Exit Client...");
+				break;
+			}
+				
+		}
+			
+		}catch(Exception e) {
+			
+		}finally {
+			sc.close();
+			if(socket!=null) {
+				socket.close();
+			}
+		}
+	}
+	public static void main(String[] args) {
+		Client client = new Client("192.168.123.107",7777);
+		try {
+			client.connect();
+			client.request();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

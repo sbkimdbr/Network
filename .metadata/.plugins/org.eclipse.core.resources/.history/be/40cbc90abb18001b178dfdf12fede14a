@@ -1,0 +1,46 @@
+package com.tcpip;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+public class Client {
+
+	int port;
+	String address;
+	Socket socket;
+	
+	
+	public Client() {}
+	public Client(String address,int port) {
+		this.address=address;
+		this.port=port;
+	}
+
+	public void connect() throws Exception {
+		try {
+			socket = new Socket(address,port);
+		} catch (Exception e) {
+			while(true) {
+				Thread.sleep(2000);
+				 try {
+					socket = new Socket(address,port);
+					System.out.println("Connected...");
+					break;
+				}  catch (IOException e1) {
+					System.out.println("Re-Try...");
+				}	
+				
+			}
+		} 
+	}
+	public static void main(String[] args) {
+		Client client = new Client("192.168.123.107",7777);
+		try {
+			client.connect();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
