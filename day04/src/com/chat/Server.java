@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.msg.Msg;
 
@@ -44,6 +46,7 @@ public class Server {
 			makeOut(socket);
 			new Receiver(socket).start(); //소켓이 만들어 질 때 마다 새로운 쓰레드 생성 받으려면 inputstream필요 이는 소켓에서 생 
 			
+			
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -73,7 +76,8 @@ public class Server {
 		Socket socket;
 		ObjectInputStream oi;
 		public Receiver(Socket socket) throws IOException {
-			oi = new ObjectInputStream(socket.getInputStream());
+			this.socket=socket;
+			oi = new ObjectInputStream(this.socket.getInputStream());
 		}
 		@Override
 		public void run() {
@@ -88,8 +92,11 @@ public class Server {
 						throw new Exception();
 					    //강제로 예외 발생시켜서 아래의 catch구문으로 내려가도록 
 					}
+					sendMsg(msg);//모든 클라이언트에게 메세지를 보내겠다
+					System.out.println("["+msg.getId()+"]"+msg.getMsg());
 					
-					System.out.println(msg.getMsg());
+					
+					//System.out.println(msg.getMsg());
 							
 				} catch (Exception e) {
 					//여기서 예외되면 클라이언트가 죽은 상태임 
@@ -116,10 +123,35 @@ public class Server {
 	//sendthread에게 전송하는 역할 
 	//리시브가받아서 센드에 던지고 센더 호출 여러명의 해쉬맵의 정보를 꺼내서 전송을 하겠
 	public void sendMsg(Msg msg) {
-		
+		Sender sender = new Sender();
+		sender.setMsg(msg);
+		sender.start();
 	}
 
+	//sender Thread에 메세지를 넣어준다 
 	class Sender extends Thread{
+		Msg msg;
+		public void setMsg(Msg msg) {
+			this.msg=msg;
+		}
+		
+	    //받은 메세지를 모든 사용자에게 보내줘야 한다. 
+		@Override
+		public void run() {
+		Collection<ObjectOutputStream>cols=
+				maps.values();
+		Iterator<ObjectOutputStream> it =
+				cols.iterator();
+		while(it.hasNext()) {
+			try {
+				it.next().writeObject(msg);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}//받은 메세지를 컬렉션으로빼고 이터레이터로 넣은 후 while루프로 값을 읽는
+		}
+		}
+		
 		
 	}
 	

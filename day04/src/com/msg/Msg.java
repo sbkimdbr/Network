@@ -5,6 +5,10 @@ import java.io.Serializable;
 public class Msg implements Serializable {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String ip;
 	private String id;
 	private String msg;
