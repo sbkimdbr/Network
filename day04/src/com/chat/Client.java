@@ -1,6 +1,7 @@
 package com.chat;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -44,6 +45,7 @@ public class Client {
 		}
 		System.out.println("Connenected socket of Server...:"+address);
 		sender=new Sender(socket);
+		new Receiver(socket).start();
 	}
 	
 	//스캐너에서 입력되어 보내는 곳 
@@ -93,14 +95,24 @@ public class Client {
 			if(oo!=null) {
 				try {
 					oo.writeObject(msg);//msg전송 
+					
 				} catch (IOException e) {
 					// server가 죽어있을 확률이 크다 
-					e.printStackTrace();
+					
+						try {
+							if(socket!=null) {
+							socket.close();
+							}
+						}catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						
+					}
+					
 				    try {
 				    	
-						if(socket!=null) {
-							socket.close();
-						}
+				    	Thread.sleep(2000);
+				    	Connect();
 						
 					
 					} catch (Exception e2) {
@@ -108,19 +120,51 @@ public class Client {
 					}
 				}
 			}
+		
+			}
+		
+		
+	
 		}
 		
-		
-	}
-	
     class Receiver extends Thread{
-    	
+      ObjectInputStream oi;
+      public Receiver(Socket socket) throws IOException {
+    	  oi=new ObjectInputStream(socket.getInputStream());
+      }
+	@Override
+	public void run() {
+		while(oi!=null) {
+			
+			Msg msg =null;
+			try {
+				msg=(Msg) oi.readObject();
+				System.out.println(msg.getId()+msg.getMsg());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				break;
+			} 
+		}
+		try {
+			if(oi!=null) {
+				oi.close();
+			}
+			if(socket!=null) {
+				socket.close();
+			}
+			
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+	}
+      
     }
 	//서버에서 보내는 메세지도 받아야 한다. 
 	
 	public static void main(String[] args) {
 	
-		Client client = new Client("192.168.0.122",5555,"subi");
+		Client client = new Client("192.168.123.107",5555,"subi");
 		try {
 			client.Connect();
 		    client.sendMsg();//key받아서 메세지 보낸다 
