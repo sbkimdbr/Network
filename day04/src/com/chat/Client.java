@@ -5,7 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Set;
 
 import com.msg.Msg;
 
@@ -16,6 +19,7 @@ public class Client {
 	String id;
 	Socket socket;
 	Sender sender;
+
 	
 	public Client() {}
 	public Client(String address,int port, String id) {
@@ -55,8 +59,17 @@ public class Client {
 		while(true) {
 			System.out.println("Input MSG");
 			String ms = sc.nextLine();
+			Msg msg = null;
+			if(ms.equals("1")) {
+			msg = new Msg(id,ms);
+			}else {
+				
+			ArrayList<String> ips = new ArrayList<>();
+			ips.add("/192.168.123.107");
+			 msg = new Msg(null,id,ms);//내가 보내고자 하는 ip 입력 ,빈칸이면 모든 사람에게 전송
+				
+			}
 			
-			Msg msg = new Msg("",id,ms);
 			sender.setMsg(msg);
 			new Thread(sender).start(); // 여기서 Sender를 server에 보낸다.
 			
@@ -139,6 +152,15 @@ public class Client {
 			Msg msg =null;
 			try {
 				msg=(Msg) oi.readObject();
+				if(msg.getMaps()!=null) {
+					HashMap<String,Msg> hm = msg.getMaps();
+					
+					Set<String>keys =hm.keySet();
+					for(String k : keys) {
+						System.out.println(k);
+					}
+							continue;
+				}
 				System.out.println(msg.getId()+msg.getMsg());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
