@@ -23,7 +23,7 @@ public class Client {
 	
 	public Client() {}
 	public Client(String address,int port, String id) {
-		this.address=address;
+		this.address=address;//tcpip서버로 간다
 		this.port=port;
 		this.id=id;
 			
@@ -31,7 +31,7 @@ public class Client {
 	
 	public void Connect() throws IOException {
 		try {
-			socket = new Socket(address,port);
+			socket = new Socket(address,port);//tcpip소켓으로 연결됨 
 		} catch (Exception e) {
 			while(true) {
 				//System.out.println("Retry...");
@@ -55,7 +55,7 @@ public class Client {
 	//스캐너에서 입력되어 보내는 곳 
 	//key를 받아서 
 	public void sendMsg() {
-		Scanner sc= new Scanner(System.in) ;
+		Scanner sc= new Scanner(System.in) ; //스캐너로 데이터를 받아서 sender의 쓰레드로 보냈었다 
 		while(true) {
 			System.out.println("Input MSG");
 			String ms = sc.nextLine();
@@ -65,9 +65,9 @@ public class Client {
 			}else {
 				
 			ArrayList<String> ips = new ArrayList<>();
-			ips.add("/192.168.0.17");
-			 msg = new Msg(null,id,ms);//내가 보내고자 하는 ip 입력 ,빈칸이면 모든 사람에게 전송
-				
+			ips.add("/192.168.123.107");
+			 msg = new Msg(id,ms);//내가 보내고자 하는 ip 입력 ,빈칸이면 모든 사람에게 전송
+			
 			}
 			
 			sender.setMsg(msg);
@@ -139,7 +139,8 @@ public class Client {
 		
 	
 		}
-		
+	
+	//admin이 요청하면 tcpip로 데이터를 보내기만 한다 
     class Receiver extends Thread{
       ObjectInputStream oi;
       public Receiver(Socket socket) throws IOException {
@@ -186,7 +187,7 @@ public class Client {
 	
 	public static void main(String[] args) {
 	
-		Client client = new Client("192.168.0.17",5555,"subi");
+		Client client = new Client("192.168.123.107",5555,"subi");
 		try {
 			client.Connect();
 		    client.sendMsg();//key받아서 메세지 보낸다 
