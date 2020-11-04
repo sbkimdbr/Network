@@ -22,7 +22,7 @@ import java.net.URL;
 public class Test3 {
 //
 	public static void main(String[] args) throws IOException {
-		String urlstr = "http://192.168./";
+		String urlstr = "http://192.168.0.82/web/car.jsp";
 		URL url = null;
 		HttpURLConnection con = null;
 	  

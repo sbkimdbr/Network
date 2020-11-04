@@ -18,5 +18,11 @@
 
 
 
+#### 6. /tcpip/main.jsp
+
+다른 client에서 들어오는 실시간 데이터 받아오기 
+
+**다른 client**-> 새로운 프로젝트 생성 후 latte라는 이름의 client 생성함 
+
 
 
