@@ -114,11 +114,11 @@ public class Server {
 						msg.setMaps(hm);
 						
 					}
-					sendMsg(msg);//모든 클라이언트에게 메세지를 보내겠다
+					//모든 클라이언트에게 메세지를 보내겠다
 					System.out.println("["+msg.getId()+"]"+msg.getMsg());
+					sendMsg(msg);
 					
-					
-					//System.out.println(msg.getMsg());
+					System.out.println(msg);
 							
 				} catch (Exception e) {
 					//여기서 예외되면 클라이언트가 죽은 상태임 
